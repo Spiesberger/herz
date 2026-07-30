@@ -13,45 +13,17 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
-      font-family: Arial, sans-serif;
     }
   </style>
 </head>
 <body>
-
-  <!-- Audio-Element mit deiner MP3-Datei -->
-  <audio id="bg-music" loop preload="auto">
-    <source src="lied.mp3" type="audio/mpeg">
-    Dein Browser unterstützt kein Audio.
-  </audio>
-
   <canvas id="canvas"></canvas>
 
   <script>
-    const audio = document.getElementById('bg-music');
-    let musicStarted = false;
-
-    // Startet die Musik beim ALLERERSTEN Tippen oder Klick auf der Seite
-    function startAudioOnInteraction() {
-      if (!musicStarted) {
-        audio.play().then(() => {
-          musicStarted = true;
-        }).catch(err => console.log("Autoplay blockiert:", err));
-
-        // Event-Listener entfernen, damit es nur einmal getriggert wird
-        document.removeEventListener('click', startAudioOnInteraction);
-        document.removeEventListener('touchstart', startAudioOnInteraction);
-      }
-    }
-
-    // Hört auf Klick (PC) und Touch (Handy)
-    document.addEventListener('click', startAudioOnInteraction);
-    document.addEventListener('touchstart', startAudioOnInteraction);
-
-    // Herz-Animation Canvas
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
+    // Display-Größe anpassen
     const width = window.innerWidth;
     const height = window.innerHeight;
     canvas.width = width;
@@ -60,6 +32,7 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
+    // Auf Handys etwas kleiner skalieren
     const isMobile = width < 600;
     const baseScale = isMobile ? 0.6 : 1.0;
 
@@ -72,31 +45,29 @@
 
     function draw() {
       if (scaleStep <= 16) {
-        for (let speed = 0; speed < 3; speed++) {
-          if (scaleStep > 16) break;
+        let currentScale = scaleStep * baseScale;
+        let angle = i * (Math.PI * 2) / 120;
 
-          let currentScale = scaleStep * baseScale;
-          let angle = i * (Math.PI * 2) / 120;
+        let x = 16 * Math.pow(Math.sin(angle), 3) * currentScale;
+        let y = (
+          13 * Math.cos(angle)
+          - 5 * Math.cos(2 * angle)
+          - 2 * Math.cos(3 * angle)
+          - Math.cos(4 * angle)
+        ) * currentScale;
 
-          let x = 16 * Math.pow(Math.sin(angle), 3) * currentScale;
-          let y = (
-            13 * Math.cos(angle)
-            - 5 * Math.cos(2 * angle)
-            - 2 * Math.cos(3 * angle)
-            - Math.cos(4 * angle)
-          ) * currentScale;
+        ctx.fillText("I love you", centerX + x, centerY - y);
 
-          ctx.fillText("I love you", centerX + x, centerY - y);
-
-          i++;
-          if (i >= 120) {
-            i = 0;
-            scaleStep++;
-          }
+        i++;
+        if (i >= 120) {
+          i = 0;
+          scaleStep++;
         }
-        setTimeout(draw, 33);
+        setTimeout(draw, 25);
       }
     }
+
+    draw();
   </script>
 </body>
 </html>
