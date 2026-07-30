@@ -13,17 +13,56 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    #music-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: rgba(255, 182, 193, 0.2);
+      border: 1px solid #ffb6c1;
+      color: #ffb6c1;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
     }
   </style>
 </head>
 <body>
+
+  <!-- Button zum Starten / Stoppen der Musik -->
+  <button id="music-btn" onclick="toggleMusic()">🎵 Musik starten</button>
+
+  <!-- Das Audio-Element (Link zur MP3-Datei unten anpassen!) -->
+  <audio id="bg-music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    Dein Browser unterstützt kein Audio.
+  </audio>
+
   <canvas id="canvas"></canvas>
 
   <script>
+    // Musik-Steuerung
+    const audio = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+
+    function toggleMusic() {
+      if (audio.paused) {
+        audio.play();
+        musicBtn.innerText = '⏸️ Musik pausieren';
+      } else {
+        audio.pause();
+        musicBtn.innerText = '🎵 Musik starten';
+      }
+    }
+
+    // Herz-Animation Canvas
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // Display-Größe anpassen
     const width = window.innerWidth;
     const height = window.innerHeight;
     canvas.width = width;
@@ -32,7 +71,6 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
-    // Auf Handys etwas kleiner skalieren
     const isMobile = width < 600;
     const baseScale = isMobile ? 0.6 : 1.0;
 
@@ -45,25 +83,29 @@
 
     function draw() {
       if (scaleStep <= 16) {
-        let currentScale = scaleStep * baseScale;
-        let angle = i * (Math.PI * 2) / 120;
+        for (let speed = 0; speed < 3; speed++) {
+          if (scaleStep > 16) break;
 
-        let x = 16 * Math.pow(Math.sin(angle), 3) * currentScale;
-        let y = (
-          13 * Math.cos(angle)
-          - 5 * Math.cos(2 * angle)
-          - 2 * Math.cos(3 * angle)
-          - Math.cos(4 * angle)
-        ) * currentScale;
+          let currentScale = scaleStep * baseScale;
+          let angle = i * (Math.PI * 2) / 120;
 
-        ctx.fillText("I love you", centerX + x, centerY - y);
+          let x = 16 * Math.pow(Math.sin(angle), 3) * currentScale;
+          let y = (
+            13 * Math.cos(angle)
+            - 5 * Math.cos(2 * angle)
+            - 2 * Math.cos(3 * angle)
+            - Math.cos(4 * angle)
+          ) * currentScale;
 
-        i++;
-        if (i >= 120) {
-          i = 0;
-          scaleStep++;
+          ctx.fillText("I love you", centerX + x, centerY - y);
+
+          i++;
+          if (i >= 120) {
+            i = 0;
+            scaleStep++;
+          }
         }
-        setTimeout(draw, 25);
+        setTimeout(draw, 10);
       }
     }
 
