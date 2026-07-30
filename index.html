@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Für Sarah ❤️</title>
+  <style>
+    body {
+      background-color: black;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Display-Größe anpassen
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // Auf Handys etwas kleiner skalieren
+    const isMobile = width < 600;
+    const baseScale = isMobile ? 0.6 : 1.0;
+
+    let scaleStep = 11;
+    let i = 0;
+
+    ctx.fillStyle = '#ffb6c1';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+
+    function draw() {
+      if (scaleStep <= 16) {
+        let currentScale = scaleStep * baseScale;
+        let angle = i * (Math.PI * 2) / 120;
+
+        let x = 16 * Math.pow(Math.sin(angle), 3) * currentScale;
+        let y = (
+          13 * Math.cos(angle)
+          - 5 * Math.cos(2 * angle)
+          - 2 * Math.cos(3 * angle)
+          - Math.cos(4 * angle)
+        ) * currentScale;
+
+        ctx.fillText("I love you", centerX + x, centerY - y);
+
+        i++;
+        if (i >= 120) {
+          i = 0;
+          scaleStep++;
+        }
+        setTimeout(draw, 15);
+      }
+    }
+
+    draw();
+  </script>
+</body>
+</html>
