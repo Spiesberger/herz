@@ -15,49 +15,38 @@
       overflow: hidden;
       font-family: Arial, sans-serif;
     }
-    #music-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 10;
-      background: rgba(255, 182, 193, 0.2);
-      border: 1px solid #ffb6c1;
-      color: #ffb6c1;
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      cursor: pointer;
-      backdrop-filter: blur(5px);
-    }
   </style>
 </head>
 <body>
 
-  <!-- Button zum Starten / Stoppen der Musik -->
-  <button id="music-btn" onclick="toggleMusic()">🎵 Musik starten</button>
-
-  <!-- Das Audio-Element (Link zur MP3-Datei unten anpassen!) -->
-  <audio id="bg-music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <!-- Audio-Element mit deiner MP3-Datei -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="lied.mp3" type="audio/mpeg">
     Dein Browser unterstützt kein Audio.
   </audio>
 
   <canvas id="canvas"></canvas>
 
   <script>
-    // Musik-Steuerung
     const audio = document.getElementById('bg-music');
-    const musicBtn = document.getElementById('music-btn');
+    let musicStarted = false;
 
-    function toggleMusic() {
-      if (audio.paused) {
-        audio.play();
-        musicBtn.innerText = '⏸️ Musik pausieren';
-      } else {
-        audio.pause();
-        musicBtn.innerText = '🎵 Musik starten';
+    // Startet die Musik beim ALLERERSTEN Tippen oder Klick auf der Seite
+    function startAudioOnInteraction() {
+      if (!musicStarted) {
+        audio.play().then(() => {
+          musicStarted = true;
+        }).catch(err => console.log("Autoplay blockiert:", err));
+
+        // Event-Listener entfernen, damit es nur einmal getriggert wird
+        document.removeEventListener('click', startAudioOnInteraction);
+        document.removeEventListener('touchstart', startAudioOnInteraction);
       }
     }
+
+    // Hört auf Klick (PC) und Touch (Handy)
+    document.addEventListener('click', startAudioOnInteraction);
+    document.addEventListener('touchstart', startAudioOnInteraction);
 
     // Herz-Animation Canvas
     const canvas = document.getElementById('canvas');
@@ -105,7 +94,7 @@
             scaleStep++;
           }
         }
-        setTimeout(draw, 10);
+        setTimeout(draw, 25);
       }
     }
 
